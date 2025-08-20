@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kong-ingress-learn
+  namespace: kong-ingress-learn
+  annotations:
+    kubernetes.io/ingress.class: kong
+    cert-manager.io/cluster-issuer: letsencrypt-kong
+    konghq.com/proxy-connect-timeout: "120000"
+    konghq.com/proxy-send-timeout: "120000"
+    konghq.com/proxy-read-timeout: "120000"
+spec:
+  tls:
+    - hosts:
+        - "kong-ingress.domain.com"
+      secretName: be-kong-tls-cert
+  rules:
+    - host: kong-ingress.domain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kong-ingress-learn
+                port:
+                  number: 80
